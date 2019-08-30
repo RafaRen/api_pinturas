@@ -4,7 +4,8 @@ module.exports = {
         user:'root',
         password:'root',
         database:'database_pinturas',
-        multipleStatements: true
+        multipleStatements: true,
+        connectionLimit : 100,
 
     }
 };
