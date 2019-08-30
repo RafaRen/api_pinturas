@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mysqlConnection = require('../database');
+const checkAuth = require('../middleware/chech-auth')
 
 var categorieModel = require('../models/categorie');
 
 //Get all categories
-router.get('/', (request, response) => {
+router.get('/', checkAuth, (request, response) => {
     mysqlConnection.query('SELECT * FROM categories', (error, rows, fields) => {
         if (error) throw error;
         //return the current rows from DB
@@ -14,7 +15,7 @@ router.get('/', (request, response) => {
 });
 
 //Get categorie by id
-router.get('/:id', (request, response) => {
+router.get('/:id', checkAuth, (request, response) => {
     const { id } = request.params;
     mysqlConnection.query('Select * from categories WHERE _id = ?', id, (error, rows, fields) => {
         if (error) throw error;
@@ -28,7 +29,7 @@ router.get('/:id', (request, response) => {
 });
 
 //Create categorie
-router.post('/', (request, response) => {
+router.post('/', checkAuth, (request, response) => {
     var validCategorie = categorieModel(request.body);
     var error = validCategorie.validateSync();
     if (error) throw error;
@@ -44,10 +45,10 @@ router.post('/', (request, response) => {
 
 //Update Categorie
 
-router.put('/:id', (request, response) => {
-    const  id  = request.params.id;
+router.put('/:id', checkAuth, (request, response) => {
+    const id = request.params.id;
     console.log(id);
-    
+
     var validCategorie = categorieModel(request.body);
     var error = validCategorie.validateSync();
     if (error) throw error;
@@ -64,11 +65,11 @@ router.put('/:id', (request, response) => {
 
 //Delete categorie
 
-router.delete('/:id', (request, response) => {
+router.delete('/:id', checkAuth, (request, response) => {
     const { id } = request.params;
     mysqlConnection.query('DELETE FROM categories WHERE _id = ?', id, (error, res) => {
         if (error) throw error;
-       
+
         return response.status(200).json({
             status: "success",
             message: "Borrado exitoso"

@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mysqlConnection = require('../database');
+const checkAuth = require('../middleware/chech-auth')
 
 var orderModel = require('../models/order');
 
 //Get all orders
-router.get('/', (request, response) => {
+router.get('/', checkAuth, (request, response) => {
     mysqlConnection.query('SELECT * FROM orders', (error, rows, fields) => {
         if (error) throw error;
         //return the current rows from DB
@@ -14,7 +15,7 @@ router.get('/', (request, response) => {
 });
 
 //Get order by id
-router.get('/:id', (request, response) => {
+router.get('/:id', checkAuth, (request, response) => {
     const { id } = request.params;
     mysqlConnection.query('Select * from orders WHERE _id = ?', id, (error, rows, fields) => {
         if (error) throw error;
@@ -28,7 +29,7 @@ router.get('/:id', (request, response) => {
 });
 
 //Get order by idUser
-router.get('/idUser/:id', (request, response) => {
+router.get('/idUser/:id', checkAuth, (request, response) => {
     const { id } = request.params;
     mysqlConnection.query('Select * from orders WHERE idUser = ?', id, (error, rows, fields) => {
         if (error) throw error;
@@ -42,7 +43,7 @@ router.get('/idUser/:id', (request, response) => {
 });
 
 //Create Order
-router.post('/', (request, response) => {
+router.post('/', checkAuth, (request, response) => {
     var validOrder = orderModel(request.body);
     var error = validOrder.validateSync();
     if (error) throw error;
@@ -58,10 +59,10 @@ router.post('/', (request, response) => {
 
 //Update Order
 
-router.put('/:id', (request, response) => {
-    const  id  = request.params.id;
+router.put('/:id', checkAuth, (request, response) => {
+    const id = request.params.id;
     console.log(id);
-    
+
     var validOrder = orderModel(request.body);
     var error = validOrder.validateSync();
     if (error) throw error;
@@ -77,11 +78,11 @@ router.put('/:id', (request, response) => {
 
 //Delete order
 
-router.delete('/:id', (request, response) => {
+router.delete('/:id', checkAuth , (request, response) => {
     const { id } = request.params;
     mysqlConnection.query('DELETE FROM orders WHERE _id = ?', id, (error, res) => {
         if (error) throw error;
-       
+
         return response.status(200).json({
             status: "success",
             message: "Borrado exitoso"

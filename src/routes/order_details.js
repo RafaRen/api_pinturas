@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const mysqlConnection = require('../database');
+const checkAuth = require('../middleware/chech-auth')
 
 var orderDetailModel = require('../models/order_detail');
 
 //Get all order details
-router.get('/', (request, response) => {
+router.get('/', checkAuth,(request, response) => {
     mysqlConnection.query('SELECT * FROM order_detail', (error, rows, fields) => {
         if (error) throw error;
         //return the current rows from DB
@@ -14,7 +15,7 @@ router.get('/', (request, response) => {
 });
 
 //Get order Detail by id
-router.get('/:id', (request, response) => {
+router.get('/:id', checkAuth,(request, response) => {
     const { id } = request.params;
     mysqlConnection.query('Select * from order_detail WHERE _id = ?', id, (error, rows, fields) => {
         if (error) throw error;
@@ -28,7 +29,7 @@ router.get('/:id', (request, response) => {
 });
 
 //Get order Detail by idOrder
-router.get('/idOrder/:id', (request, response) => {
+router.get('/idOrder/:id', checkAuth,(request, response) => {
     const { id } = request.params;
     mysqlConnection.query('Select * from order_detail WHERE idOrder = ?', id, (error, rows, fields) => {
         if (error) throw error;
@@ -42,7 +43,7 @@ router.get('/idOrder/:id', (request, response) => {
 });
 
 //Get order Detail by idOrder
-router.get('/idProduct/:id', (request, response) => {
+router.get('/idProduct/:id', checkAuth,(request, response) => {
     const { id } = request.params;
     mysqlConnection.query('Select * from order_detail WHERE idProduct = ?', id, (error, rows, fields) => {
         if (error) throw error;
@@ -56,7 +57,7 @@ router.get('/idProduct/:id', (request, response) => {
 });
 
 //Create order Detail
-router.post('/', (request, response) => {
+router.post('/', checkAuth,(request, response) => {
     var validOrderDetail = orderDetailModel(request.body);
     var error = validOrderDetail.validateSync();
     if (error) throw error;
@@ -72,7 +73,7 @@ router.post('/', (request, response) => {
 
 //Update Categorie
 
-router.put('/:id', (request, response) => {
+router.put('/:id', checkAuth,(request, response) => {
     const  id  = request.params.id;
     console.log(id);
     
@@ -91,7 +92,7 @@ router.put('/:id', (request, response) => {
 
 //Delete order_detail
 
-router.delete('/:id', (request, response) => {
+router.delete('/:id', checkAuth,(request, response) => {
     const { id } = request.params;
     mysqlConnection.query('DELETE FROM order_detail WHERE _id = ?', id, (error, res) => {
         if (error) throw error;

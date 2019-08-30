@@ -4,13 +4,14 @@ const mysqlConnection = require('../database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var userModel = require('../models/user');
+const checkAuth = require('../middleware/chech-auth')
 
 var salt = bcrypt.genSaltSync(10);
 var hash = bcrypt.hashSync("B4c0/\/", salt);
 
 
 //Get all users
-router.get('/', (req, res) => {
+router.get('/', checkAuth, (req, res) => {
     mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
         if (!err) {
             // res.json(rows);
@@ -24,7 +25,7 @@ router.get('/', (req, res) => {
 });
 
 // GET An user by id
-router.get('/:id', (req, res) => {
+router.get('/:id', checkAuth,(req, checkAuth, res) => {
     const { id } = req.params;
     mysqlConnection.query('SELECT * FROM users WHERE id = ?', [id], (err, rows, fields) => {
         if (rows.length <= 0)
@@ -111,8 +112,8 @@ router.post('/login', (req, response, next) => {
         else if (!err) {
             //if the user is signed
             storedPassword = resSQL[0].password;
-            console.log('Stored password ', storedPassword);
-            console.log('Incoming password ', req.body.password);
+            // console.log('Stored password ', storedPassword);
+            // console.log('Incoming password ', req.body.password);
 
             //#region BCRYPT
             //esta funcion viene en la documentacion de bcryp la cual dice que compara  la hash de la data base con la hash que recibe y dice si hacen match o no
@@ -128,16 +129,19 @@ router.post('/login', (req, response, next) => {
                 if (res) {
                     //guardamos la funcion jwt la cual su funcionalidad viene en la documentacion de jsonwebtokens
                     const token = jwt.sign({
-                        email: res.email,
-                        userId: res.id,
-                        nombre: res.name,
+                        email: resSQL[0].email,
+                        idUser: resSQL[0]._id,
+                        nombre: resSQL[0].name,
                     },
                         //Secret key
                         'Knd@321'
                         ,
                         {
                             expiresIn: "1h"
-                        });
+                        }, { algorithm: 'RS256' });
+                    console.log('Token', token);
+
+
                     return response.status(200).json({
                         status: "success",
                         message: 'Autorización exitosa',
@@ -170,7 +174,7 @@ router.post('/login', (req, response, next) => {
 
 
 // update an user
-router.put('/:id', (request, response, next) => {
+router.put('/:id', checkAuth, (request, response, next) => {
     const id = request.params.id;
     //codigo si no se va actualizar contraseña
     if (request.body.password == undefined) {
@@ -217,7 +221,7 @@ router.put('/:id', (request, response, next) => {
 })
 
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', checkAuth, (req, res, next) => {
     const id = req.params.id;
     mysqlConnection.query('DELETE FROM users WHERE _id = ?', id, (error, resSQL) => {
         if (error) throw error;

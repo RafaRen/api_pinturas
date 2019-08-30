@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mysqlConnection = require('../database');
+const checkAuth = require('../middleware/chech-auth')
 
 const productModel = require('../models/product');
 
@@ -28,7 +29,7 @@ router.get('/:id', (request, response) => {
 
 
 //Create product
-router.post('/', (request, response) => {
+router.post('/', checkAuth,(request, response) => {
     var validProduct = productModel(request.body);
     var error = validProduct.validateSync();
     if (error) throw error;
@@ -44,7 +45,7 @@ router.post('/', (request, response) => {
 
 //Update Product
 
-router.put('/:id', (request, response) => {
+router.put('/:id', checkAuth,(request, response) => {
     const  id  = request.params.id;
     console.log(id);
     
@@ -63,7 +64,7 @@ router.put('/:id', (request, response) => {
 
 //Delete product
 
-router.delete('/:id', (request, response) => {
+router.delete('/:id', checkAuth,(request, response) => {
     const { id } = request.params;
     mysqlConnection.query('DELETE FROM products WHERE _id = ?', id, (error, res) => {
         if (error) throw error;
