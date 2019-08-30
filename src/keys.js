@@ -1,6 +1,6 @@
 module.exports = {
     database:{
-        host:'localhost',
+        host:'https://apipinturas.herokuapp.com/',
         user:'root',
         password:'root',
         database:'database_pinturas',
