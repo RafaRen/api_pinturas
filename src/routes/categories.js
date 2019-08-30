@@ -6,7 +6,7 @@ const checkAuth = require('../middleware/chech-auth')
 var categorieModel = require('../models/categorie');
 
 //Get all categories
-router.get('/', checkAuth, (request, response) => {
+router.get('/', (request, response) => {
     mysqlConnection.query('SELECT * FROM categories', (error, rows, fields) => {
         if (error) throw error;
         //return the current rows from DB
@@ -15,7 +15,7 @@ router.get('/', checkAuth, (request, response) => {
 });
 
 //Get categorie by id
-router.get('/:id', checkAuth, (request, response) => {
+router.get('/:id', (request, response) => {
     const { id } = request.params;
     mysqlConnection.query('Select * from categories WHERE _id = ?', id, (error, rows, fields) => {
         if (error) throw error;
