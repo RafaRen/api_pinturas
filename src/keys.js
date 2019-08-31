@@ -7,7 +7,8 @@ module.exports = {
         database:'heroku_1b819384bce6abd',
         multipleStatements: true,
         connectionLimit : 100,
-        debug : 'false'
+        debug : 'false',
+        connectTimeout:0
 
     }
 };
