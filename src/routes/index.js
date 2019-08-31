@@ -16,7 +16,7 @@ const template = `
 
 <body>
   <div class="container">
-    <h1>WEB NUTRIOLOGA</h1>
+    <h1>Api KND</h1>
     <p>Esta API fue creada por Rafael Alejandro Renteria
       Gomez </p>
     <h2>Servicios</h2>
@@ -58,8 +58,9 @@ const template = `
       </tr>
      
     </table>
+    Postman collection LINK <a href="https://www.getpostman.com/collections/252cf368464e82ea1a93">https://www.getpostman.com/collections/252cf368464e82ea1a93</a>
   </div>
-  Postman collection LINK https://www.getpostman.com/collections/252cf368464e82ea1a93
+ 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
