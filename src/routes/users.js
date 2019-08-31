@@ -18,7 +18,7 @@ router.get('/', checkAuth, (req, res) => {
     var mysql = require('mysql2');
     var mysqlConnection = mysql.createConnection(database);
 
-    mysqlConnection.getConnection(function (err, connection) {
+    mysqlConnection.connect(function (err, connection) {
         if (err) throw err; // not connected!
 
         mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
