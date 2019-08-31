@@ -3,10 +3,11 @@ module.exports = {
     database:{
         host:'us-cdbr-iron-east-02.cleardb.net',
         user:'b18469d6706cbb',
-        password:'1dbe4ebd ',
+        password:'1dbe4ebd',
         database:'heroku_1b819384bce6abd',
         multipleStatements: true,
-        connectionLimit : 100
+        connectionLimit : 100,
+        debug : 'false'
 
     }
 };
