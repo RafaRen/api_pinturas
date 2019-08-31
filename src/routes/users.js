@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var userModel = require('../models/user');
 const checkAuth = require('../middleware/chech-auth')
+const { database } = require('./keys');
 
 var salt = bcrypt.genSaltSync(10);
 var hash = bcrypt.hashSync("B4c0/\/", salt);
@@ -13,18 +14,26 @@ var hash = bcrypt.hashSync("B4c0/\/", salt);
 
 //Get all users
 router.get('/', checkAuth, (req, res) => {
-    mysqlConnection.connect();
-    mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
-        mysqlConnection.close();
-        if (!err) {
-            // res.json(rows);
-            res.status(200).json(rows);
-            return;
-        } else {
-            console.log(err);
-            return;
-        }
+
+    var mysql = require('mysql2');
+    var mysqlConnection = mysql.createConnection(database);
+
+    mysqlConnection.getConnection(function (err, connection) {
+        if (err) throw err; // not connected!
+
+        mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
+            if (!err) {
+                mysqlConnection.close();
+                // res.json(rows);
+                res.status(200).json(rows);
+                return;
+            } else {
+                console.log(err);
+                return;
+            }
+        });
     });
+
 });
 
 // GET An user by id
