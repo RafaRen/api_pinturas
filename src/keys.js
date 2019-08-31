@@ -8,8 +8,10 @@ module.exports = {
         multipleStatements: true,
         connectionLimit : 100,
         debug : 'false',
-        connectTimeout:0
-
+        connectionLimit : 1000,
+        connectTimeout  : 60 * 60 * 1000,
+        acquireTimeout  : 60 * 60 * 1000,
+        timeout         : 60 * 60 * 1000
     }
 };
 //Local keys
