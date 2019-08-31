@@ -25,7 +25,7 @@ router.get('/', checkAuth, (req, res) => {
 });
 
 // GET An user by id
-router.get('/:id', checkAuth,(req, checkAuth, res) => {
+router.get('/:id', checkAuth, (req, checkAuth, res) => {
     const { id } = req.params;
     mysqlConnection.query('SELECT * FROM users WHERE id = ?', [id], (err, rows, fields) => {
         if (rows.length <= 0)
@@ -65,8 +65,11 @@ router.post('/signin', (req, response) => {
                 //store the encrypted password
                 validUser.password = hash;
                 console.log('entro');
-                
+
                 mysqlConnection.query("INSERT INTO users set ?", validUser.toJSON(), function (err, res) {
+                    console.log('entro2');
+                    // When done with the connection, release it.
+                    mysqlConnection.release();
                     if (!err) {
 
                         const json = {
