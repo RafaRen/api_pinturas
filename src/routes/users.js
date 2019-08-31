@@ -30,26 +30,19 @@ router.get('/', checkAuth, (req, res) => {
 // GET An user by id
 router.get('/:id', checkAuth, (req, checkAuth, res) => {
     const { id } = req.params;
-    //instantiate pool conection every petition created
-    var mysql = require('mysql2');
-    var mysqlConnection = mysql.createConnection(database);
 
-    mysqlConnection.connect(function (err, connection) {
-        if (err) throw err; // not connected!
-
-        mysqlConnection.query('SELECT * FROM users WHERE id = ?', [id], (err, rows, fields) => {
-            if (rows.length <= 0)
-                throw response.status(404).json({
-                    "status": "error",
-                    "message": "Usuario no encontrado"
-                });
-            if (!err) {
-                res.json(rows[0]);
-            } else {
-                console.log(err);
-            }
-        });
-    });
+    sqlOpenCloseConnection(mysqlConnection.query('SELECT * FROM users WHERE id = ?', [id], (err, rows, fields) => {
+        if (rows.length <= 0)
+            throw response.status(404).json({
+                "status": "error",
+                "message": "Usuario no encontrado"
+            });
+        if (!err) {
+            res.json(rows[0]);
+        } else {
+            console.log(err);
+        }
+    }))
 });
 
 // Sign-In An User
@@ -76,34 +69,30 @@ router.post('/signin', (req, response) => {
                 //store the encrypted password
                 validUser.password = hash;
 
-                //instantiate pool conection every petition created
-                var mysql = require('mysql2');
-                var mysqlConnection = mysql.createConnection(database);
-                //open connection if went closed
-                mysqlConnection.connect(function (err, connection) {
-                    if (err) throw err; // not connected!
-                    mysqlConnection.query("INSERT INTO users set ?", validUser.toJSON(), function (err, res) {
-                        // When done with the connection, release it.
-                        // mysqlConnection.destroy();
-                        if (!err) {
 
-                            const json = {
-                                "status": "success",
-                                "message": "Usuario registrado"
-                            };
-                            response.status(200).json(json);
-                        }
-                        else {
-                            const json = {
-                                "status": "error",
-                                "data": err,
-                                "message": "Error"
-                            };
-                            console.log("error: ", err);
-                            response.status(500).json(json);
-                        }
-                    });
-                });
+                sqlOpenCloseConnection(mysqlConnection.query("INSERT INTO users set ?", validUser.toJSON(), function (err, res) {
+                    // When done with the connection, release it.
+                    // mysqlConnection.destroy();
+                    if (!err) {
+
+                        const json = {
+                            "status": "success",
+                            "message": "Usuario registrado"
+                        };
+                        response.status(200).json(json);
+                    }
+                    else {
+                        const json = {
+                            "status": "error",
+                            "data": err,
+                            "message": "Error"
+                        };
+                        console.log("error: ", err);
+                        response.status(500).json(json);
+                    }
+                }));
+
+
             }
         });
     });
@@ -116,6 +105,7 @@ router.post('/login', (req, response, next) => {
     const error = validUser.validateSync();
     //if email dosent match with the model regex
     if (error) throw error;
+
     sqlOpenCloseConnection(mysqlConnection.query("Select * from users where email = ? ", validUser.email, function (err, resSQL, rows) {
         // When done with the connection, release it.
         // mysqlConnection.release();
@@ -196,22 +186,19 @@ router.post('/login', (req, response, next) => {
 // update an user
 router.put('/:id', checkAuth, (request, response, next) => {
     const id = request.params.id;
-    //instantiate pool conection every petition created
-    var mysql = require('mysql2');
-    var mysqlConnection = mysql.createConnection(database);
+
     //codigo si no se va actualizar contraseña
     if (request.body.password == undefined) {
-        mysqlConnection.connect(function (err, connection) {
-            if (err) throw err; // not connected!
-            mysqlConnection.query('UPDATE users SET ? WHERE _id = ?', [request.body, id], (error, resSQL) => {
-                if (error) throw error;
-                return response.status(200).json({
-                    status: "success",
-                    message: 'Actualizacion exitosa',
 
-                })
-            });
-        });
+
+        sqlOpenCloseConnection(mysqlConnection.query('UPDATE users SET ? WHERE _id = ?', [request.body, id], (error, resSQL) => {
+            if (error) throw error;
+            return response.status(200).json({
+                status: "success",
+                message: 'Actualizacion exitosa',
+
+            })
+        }));
 
     } else {
         //codigo si quiere actualizar contraseña
@@ -232,14 +219,14 @@ router.put('/:id', checkAuth, (request, response, next) => {
                     //new password hashed
                     request.body.password = hash;
                     // Store hash in your password DB.
-                    mysqlConnection.query('UPDATE users SET ? WHERE _id = ?', [request.body, id], (error, resSQL) => {
+                    sqlOpenCloseConnection(mysqlConnection.query('UPDATE users SET ? WHERE _id = ?', [request.body, id], (error, resSQL) => {
                         if (error) throw error;
                         return response.status(200).json({
                             status: "success",
                             message: 'Actualizacion exitosa',
 
                         })
-                    });
+                    }));
                 }//fin else si no existio problema con bcrypt
             });
         });//fin funcion bcrypt
@@ -249,7 +236,8 @@ router.put('/:id', checkAuth, (request, response, next) => {
 
 router.delete('/:id', checkAuth, (req, res, next) => {
     const id = req.params.id;
-    mysqlConnection.query('DELETE FROM users WHERE _id = ?', id, (error, resSQL) => {
+
+    sqlOpenCloseConnection(mysqlConnection.query('DELETE FROM users WHERE _id = ?', id, (error, resSQL) => {
         if (error) throw error;
         if (resSQL.affectedRows > 0) {
             return res.status(200).json({
@@ -265,7 +253,7 @@ router.delete('/:id', checkAuth, (req, res, next) => {
             })
         }
 
-    });
+    }));
 });
 
 
