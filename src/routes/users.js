@@ -10,6 +10,7 @@ var salt = bcrypt.genSaltSync(10);
 var hash = bcrypt.hashSync("B4c0/\/", salt);
 
 
+
 //Get all users
 router.get('/', checkAuth, (req, res) => {
     mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
@@ -67,7 +68,7 @@ router.post('/signin', (req, response) => {
 
                 mysqlConnection.query("INSERT INTO users set ?", validUser.toJSON(), function (err, res) {
                     // When done with the connection, release it.
-                    mysqlConnection.destroy();
+                    // mysqlConnection.destroy();
                     if (!err) {
 
                         const json = {
