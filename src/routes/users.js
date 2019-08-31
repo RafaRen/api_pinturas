@@ -15,7 +15,7 @@ var hash = bcrypt.hashSync("B4c0/\/", salt);
 router.get('/', checkAuth, (req, res) => {
 
     mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
-
+        mysqlConnection.close();
         if (!err) {
             // res.json(rows);
             res.status(200).json(rows);
