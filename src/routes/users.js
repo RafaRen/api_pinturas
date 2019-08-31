@@ -11,30 +11,35 @@ const { database } = require('../keys');
 var salt = bcrypt.genSaltSync(10);
 var hash = bcrypt.hashSync("B4c0/\/", salt);
 
-
-
-//Get all users
-router.get('/', checkAuth, (req, res) => {
+function sqlOpenCloseConnection(mysqlScript) {
     //instantiate pool conection every petition created
     var mysql = require('mysql2');
     var mysqlConnection = mysql.createConnection(database);
     //open connection if went closed
     mysqlConnection.connect(function (err, connection) {
         if (err) throw err; // not connected!
+        //after the query ends the connection its released
 
-        mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
-            if (!err) {
-                // res.json(rows);
-                res.status(200).json(rows);
-                return;
-            } else {
-                console.log(err);
-                return;
-            }
-        });
-        //close connection
-        // mysqlConnection.exe();
+        mysqlScript;
+
+
     });
+
+}
+
+//Get all users
+router.get('/', checkAuth, (req, res) => {
+    
+    sqlOpenCloseConnection(mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
+        if (!err) {
+            // res.json(rows);
+            res.status(200).json(rows);
+            return;
+        } else {
+            console.log(err);
+            return;
+        }
+    }));
 
 });
 

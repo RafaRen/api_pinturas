@@ -1,4 +1,5 @@
 
+
 const mysql = require('mysql2');
 const { database } = require('./keys');
 
@@ -12,5 +13,9 @@ const mysqlConnection = mysql.createConnection(database);
       console.log('db is connected');
     }
   });
+
+  
+
+ 
   
   module.exports = mysqlConnection;
