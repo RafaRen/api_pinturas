@@ -6,12 +6,9 @@ module.exports = {
         password:'1dbe4ebd',
         database:'heroku_1b819384bce6abd',
         multipleStatements: true,
-        connectionLimit : 100,
-        debug : 'false',
-        connectionLimit : 2980000000,
-        connectTimeout  : 60 * 60 * 1000,
-        acquireTimeout  : 60 * 60 * 1000,
-        timeout         : 60 * 60 * 1000
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0
     }
 };
 //Local keys
