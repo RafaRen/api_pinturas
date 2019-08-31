@@ -33,7 +33,7 @@ router.get('/', checkAuth, (req, res) => {
             }
         });
         //close connection
-        mysqlConnection.close();
+        // mysqlConnection.exe();
     });
 
 });
