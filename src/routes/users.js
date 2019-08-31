@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {mysqlConnection,sqlOpenCloseConnection} = require('../database');
+const { mysqlConnection, sqlOpenCloseConnection } = require('../database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var userModel = require('../models/user');
@@ -116,92 +116,80 @@ router.post('/login', (req, response, next) => {
     const error = validUser.validateSync();
     //if email dosent match with the model regex
     if (error) throw error;
+    sqlOpenCloseConnection(mysqlConnection.query("Select * from users where email = ? ", validUser.email, function (err, resSQL, rows) {
+        // When done with the connection, release it.
+        // mysqlConnection.release();
+        // no user finded with that email
+        if (resSQL.length == 0) {
+            console.log("Error usuario no encontrado");
+            const json = {
+                "status": "error",
+                "data": err,
+                "message": "Error usuario no encontrado"
+            };
+            response.status(403).json(json);
 
-    //instantiate pool conection every petition created
-    var mysql = require('mysql2');
-    var mysqlConnection = mysql.createConnection(database);
+        }
+        else if (!err) {
+            //if the user is signed
+            storedPassword = resSQL[0].password;
+            // console.log('Stored password ', storedPassword);
+            // console.log('Incoming password ', req.body.password);
 
-    mysqlConnection.connect(function (err, connection) {
-        if (err) throw err; // not connected!
-        //search user by email
-        mysqlConnection.query("Select * from users where email = ? ", validUser.email, function (err, resSQL, rows) {
-            // When done with the connection, release it.
-            // mysqlConnection.release();
-            // no user finded with that email
-            if (resSQL.length == 0) {
-                console.log("Error usuario no encontrado");
-                const json = {
-                    "status": "error",
-                    "data": err,
-                    "message": "Error usuario no encontrado"
-                };
-                response.status(403).json(json);
-
-            }
-            else if (!err) {
-                //if the user is signed
-                storedPassword = resSQL[0].password;
-                // console.log('Stored password ', storedPassword);
-                // console.log('Incoming password ', req.body.password);
-
-                //#region BCRYPT
-                //esta funcion viene en la documentacion de bcryp la cual dice que compara  la hash de la data base con la hash que recibe y dice si hacen match o no
-                bcrypt.compare(req.body.password, storedPassword, (err, res) => {
-                    if (err) {
-                        //if the password doesnth match with the stored one
-                        return response.status(401).json({
-                            message: 'Autorización Fallida',
-                            status: "error",
-
-                        });
-                    }
-                    if (res) {
-                        //guardamos la funcion jwt la cual su funcionalidad viene en la documentacion de jsonwebtokens
-                        const token = jwt.sign({
-                            email: resSQL[0].email,
-                            idUser: resSQL[0]._id,
-                            nombre: resSQL[0].name,
-                        },
-                            //Secret key
-                            'Knd@321'
-                            ,
-                            {
-                                expiresIn: "1h"
-                            }, { algorithm: 'RS256' });
-                        console.log('Token', token);
-
-
-                        return response.status(200).json({
-                            status: "success",
-                            message: 'Autorización exitosa',
-                            token: token,
-                            usuario: {
-                                "name": resSQL[0].name,
-                                "email": resSQL[0].email,
-                                "id": resSQL[0].id
-                            }
-                        })
-                    }
+            //#region BCRYPT
+            //esta funcion viene en la documentacion de bcryp la cual dice que compara  la hash de la data base con la hash que recibe y dice si hacen match o no
+            bcrypt.compare(req.body.password, storedPassword, (err, res) => {
+                if (err) {
+                    //if the password doesnth match with the stored one
                     return response.status(401).json({
                         message: 'Autorización Fallida',
                         status: "error",
+
                     });
-                })
-                //#endregion
-            } else {//if error while searching the user by email
-                const json = {
-                    "status": "error",
-                    "data": err,
-                    "message": "Error en el servidor al solicitar la petición"
-                };
-                response.status(500).json(json);
+                }
+                if (res) {
+                    //guardamos la funcion jwt la cual su funcionalidad viene en la documentacion de jsonwebtokens
+                    const token = jwt.sign({
+                        email: resSQL[0].email,
+                        idUser: resSQL[0]._id,
+                        nombre: resSQL[0].name,
+                    },
+                        //Secret key
+                        'Knd@321'
+                        ,
+                        {
+                            expiresIn: "1h"
+                        }, { algorithm: 'RS256' });
+                    console.log('Token', token);
 
-            }
-        });
 
+                    return response.status(200).json({
+                        status: "success",
+                        message: 'Autorización exitosa',
+                        token: token,
+                        usuario: {
+                            "name": resSQL[0].name,
+                            "email": resSQL[0].email,
+                            "id": resSQL[0].id
+                        }
+                    })
+                }
+                return response.status(401).json({
+                    message: 'Autorización Fallida',
+                    status: "error",
+                });
+            })
+            //#endregion
+        } else {//if error while searching the user by email
+            const json = {
+                "status": "error",
+                "data": err,
+                "message": "Error en el servidor al solicitar la petición"
+            };
+            response.status(500).json(json);
 
-    });
-
+        }
+    }));
 });
 
 
