@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var userModel = require('../models/user');
 const checkAuth = require('../middleware/chech-auth')
-const { database } = require('./keys');
+const { database } = require('../keys');
 
 var salt = bcrypt.genSaltSync(10);
 var hash = bcrypt.hashSync("B4c0/\/", salt);
