@@ -102,7 +102,7 @@ router.post('/login', (req, response, next) => {
     //search user by email
     mysqlConnection.query("Select * from users where email = ? ", validUser.email, function (err, resSQL, rows) {
         // When done with the connection, release it.
-        mysqlConnection.release();
+        // mysqlConnection.release();
         // no user finded with that email
         if (resSQL.length == 0) {
             console.log("Error usuario no encontrado");
