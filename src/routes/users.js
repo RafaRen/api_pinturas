@@ -64,14 +64,12 @@ router.post('/signin', (req, response) => {
             else {
                 //store the encrypted password
                 validUser.password = hash;
-                console.log('entro');
 
                 mysqlConnection.query("INSERT INTO users set ?", validUser.toJSON(), function (err, res) {
                     // When done with the connection, release it.
                     mysqlConnection.destroy();
                     if (!err) {
 
-                        console.log('entro2');
                         const json = {
                             "status": "success",
                             "message": "Usuario registrado"
@@ -103,6 +101,8 @@ router.post('/login', (req, response, next) => {
 
     //search user by email
     mysqlConnection.query("Select * from users where email = ? ", validUser.email, function (err, resSQL, rows) {
+        // When done with the connection, release it.
+        mysqlConnection.destroy();
         // no user finded with that email
         if (resSQL.length == 0) {
             console.log("Error usuario no encontrado");
