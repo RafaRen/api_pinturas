@@ -69,7 +69,7 @@ router.post('/signin', (req, response) => {
                 mysqlConnection.query("INSERT INTO users set ?", validUser.toJSON(), function (err, res) {
                     console.log('entro2');
                     // When done with the connection, release it.
-                    mysqlConnection.release();
+                    mysqlConnection.destroy();
                     if (!err) {
 
                         const json = {
