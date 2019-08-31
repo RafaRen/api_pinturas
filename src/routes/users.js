@@ -15,7 +15,7 @@ var hash = bcrypt.hashSync("B4c0/\/", salt);
 router.get('/', checkAuth, (req, res) => {
 
     // For pool initialization, see above
-    mysqlConnection.getConnection(function (err, conn) {
+    mysqlConnection.connect(function (err, conn) {
         // Do something with the connection
         mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
 
