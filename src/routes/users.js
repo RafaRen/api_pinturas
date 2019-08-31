@@ -1,35 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const mysqlConnection = require('../database');
+const {mysqlConnection,sqlOpenCloseConnection} = require('../database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var userModel = require('../models/user');
 const checkAuth = require('../middleware/chech-auth')
-//need to import database configuration cuz we need to instantiate the pool so we dont lost connection pool
-const { database } = require('../keys');
+
 
 var salt = bcrypt.genSaltSync(10);
 var hash = bcrypt.hashSync("B4c0/\/", salt);
 
-function sqlOpenCloseConnection(mysqlScript) {
-    //instantiate pool conection every petition created
-    var mysql = require('mysql2');
-    var mysqlConnection = mysql.createConnection(database);
-    //open connection if went closed
-    mysqlConnection.connect(function (err, connection) {
-        if (err) throw err; // not connected!
-        //after the query ends the connection its released
-
-        mysqlScript;
-
-
-    });
-
-}
 
 //Get all users
 router.get('/', checkAuth, (req, res) => {
-    
+    //function from database.js file
     sqlOpenCloseConnection(mysqlConnection.query('SELECT * FROM users', (err, rows, fields) => {
         if (!err) {
             // res.json(rows);
