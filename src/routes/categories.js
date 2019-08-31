@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const checkAuth = require('../middleware/chech-auth')
+const { database } = require('../keys');
 
 var categorieModel = require('../models/categorie');
 
