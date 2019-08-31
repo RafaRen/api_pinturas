@@ -64,6 +64,8 @@ router.post('/signin', (req, response) => {
             else {
                 //store the encrypted password
                 validUser.password = hash;
+                console.log('entro');
+                
                 mysqlConnection.query("INSERT INTO users set ?", validUser.toJSON(), function (err, res) {
                     if (!err) {
 
