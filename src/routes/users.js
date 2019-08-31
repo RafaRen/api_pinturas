@@ -35,7 +35,7 @@ router.get('/', checkAuth, (req, res) => {
 
 
     });
-    
+
 
 });
 
@@ -256,14 +256,19 @@ router.put('/:id', checkAuth, (request, response, next) => {
                     //new password hashed
                     request.body.password = hash;
                     // Store hash in your password DB.
-                    mysqlConnection.query('UPDATE users SET ? WHERE _id = ?', [request.body, id], (error, resSQL) => {
-                        if (error) throw error;
-                        return response.status(200).json({
-                            status: "success",
-                            message: 'Actualizacion exitosa',
+                    mysqlConnection.connect(function (err, connection) {
+                        if (err) throw err; // not connected!
 
-                        })
+                        mysqlConnection.query('UPDATE users SET ? WHERE _id = ?', [request.body, id], (error, resSQL) => {
+                            if (error) throw error;
+                            return response.status(200).json({
+                                status: "success",
+                                message: 'Actualizacion exitosa',
+
+                            })
+                        });
                     });
+
                 }//fin else si no existio problema con bcrypt
             });
         });//fin funcion bcrypt
@@ -273,23 +278,30 @@ router.put('/:id', checkAuth, (request, response, next) => {
 
 router.delete('/:id', checkAuth, (req, res, next) => {
     const id = req.params.id;
-    mysqlConnection.query('DELETE FROM users WHERE _id = ?', id, (error, resSQL) => {
-        if (error) throw error;
-        if (resSQL.affectedRows > 0) {
-            return res.status(200).json({
-                status: "success",
-                message: 'Usuario borrado',
+    //instantiate pool conection every petition created
+    var mysql = require('mysql2');
+    var mysqlConnection = mysql.createConnection(database);
+    mysqlConnection.connect(function (err, connection) {
+        if (err) throw err; // not connected!
+        mysqlConnection.query('DELETE FROM users WHERE _id = ?', id, (error, resSQL) => {
+            if (error) throw error;
+            if (resSQL.affectedRows > 0) {
+                return res.status(200).json({
+                    status: "success",
+                    message: 'Usuario borrado',
 
-            })
-        } else {
-            return res.status(403).json({
-                status: "error",
-                message: 'Usuario no encontrado',
+                })
+            } else {
+                return res.status(403).json({
+                    status: "error",
+                    message: 'Usuario no encontrado',
 
-            })
-        }
+                })
+            }
 
+        });
     });
+
 });
 
 
