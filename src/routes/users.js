@@ -185,11 +185,12 @@ router.post('/login', (req, response, next) => {
                         return response.status(200).json({
                             status: "success",
                             message: 'Autorización exitosa',
-                            token: token,
-                            usuario: {
+                            data: {
                                 "name": resSQL[0].name,
                                 "email": resSQL[0].email,
-                                "id": resSQL[0].id
+                                "id": resSQL[0].id,
+                                "token":token
+
                             }
                         })
                     }
