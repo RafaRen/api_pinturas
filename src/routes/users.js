@@ -180,8 +180,6 @@ router.post('/login', (req, response, next) => {
                                 expiresIn: "1h"
                             }, { algorithm: 'RS256' });
                         console.log('Token', token);
-
-
                         return response.status(200).json({
                             status: "success",
                             message: 'Autorización exitosa',
@@ -190,7 +188,6 @@ router.post('/login', (req, response, next) => {
                                 "email": resSQL[0].email,
                                 "id": resSQL[0].id,
                                 "token":token
-
                             }
                         })
                     }
