@@ -62,6 +62,7 @@ router.get('/idCategory/:id', (request, response) => {
                     "status": "error",
                     "message": "El idCategoria = " + id + " no tiene productos relacionados"
                 });
+            //Release connection 
             mysqlConnection.on('release', function (connection) {
                 console.log('Connection %d released', connection.threadId);
             });
@@ -70,6 +71,14 @@ router.get('/idCategory/:id', (request, response) => {
                 "data": rows
 
             });
+            //Release connection 
+            mysqlConnection.on('release', function (connection) {
+                console.log('Connection %d released', connection.threadId);
+            });
+        });
+        //Release connection 
+        mysqlConnection.on('release', function (connection) {
+            console.log('Connection %d released', connection.threadId);
         });
     });
 });
