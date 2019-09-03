@@ -56,7 +56,9 @@ router.get('/idCategory/:id', (request, response) => {
         if (err) throw { err }; // not connected!
 
         mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
-            if (error) {
+            if (error) {   
+                console.log(error);
+                
                 return response.status(404).json({
                     "status": "error",
                     "message": "El idCategoria = " + id + " no tiene productos relacionados"
