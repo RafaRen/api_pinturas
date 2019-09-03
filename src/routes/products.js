@@ -45,6 +45,28 @@ router.get('/:id', (request, response) => {
     });
 });
 
+//Get product by categorie ID
+router.get('/idCategory/:id', (request, response) => {
+    const { id } = request.params;
+    //instantiate pool conection every petition created
+    var mysql = require('mysql2');
+    var mysqlConnection = mysql.createConnection(database);
+
+    mysqlConnection.connect(function (err, connection) {
+        if (err) throw err; // not connected!
+
+        mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
+            if (error) throw error;
+            if (rows.length <= 0)
+                return response.status(404).json({
+                    "status": "error",
+                    "message": "Producto no encontrado"
+                });
+            response.status(200).json(rows[0]);
+        });
+    });
+});
+
 
 //Create product
 router.post('/', checkAuth, (request, response) => {
