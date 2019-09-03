@@ -55,31 +55,14 @@ router.get('/idCategory/:id', (request, response) => {
     mysqlConnection.connect(function (err, connection) {
         if (err) throw { err }; // not connected!
 
-        //Search if the current idCategory exists
         mysqlConnection.query('Select * from categories WHERE _id = ?', id, (error, rows, fields) => {
             if (error) throw error;
-            console.log(rows);
-
             if (rows.length <= 0)
                 return response.status(404).json({
                     "status": "error",
                     "message": "Categoria no encontrada"
                 });
-            mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
-                if (error) throw error;
-
-                if (rows.length <= 0)
-                    return response.status(404).json({
-                        "status": "error",
-                        "message": "El idCategoria = " + id + " no tiene productos relacionados"
-                    });
-
-                response.status(200).json({
-                    "status": "success",
-                    "data": rows
-
-                });
-            });
+            response.status(200).json(rows[0]);
         });
     });
 });
@@ -96,14 +79,26 @@ router.post('/', checkAuth, (request, response) => {
     var mysqlConnection = mysql.createConnection(database);
     mysqlConnection.connect(function (err, connection) {
         if (err) throw err; // not connected!
-
-        mysqlConnection.query('INSERT INTO products set ?', validProduct.toJSON(), (error, res) => {
+        //Search if the current idCategory exists
+        mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
             if (error) throw error;
-            response.status(200).json({
-                "status": "success",
-                "message": "Producto registrado"
+
+            if (rows.length <= 0)
+                return response.status(404).json({
+                    "status": "error",
+                    "message": "El idCategoria = " + id + " no tiene productos relacionados"
+                });
+
+            mysqlConnection.query('INSERT INTO products set ?', validProduct.toJSON(), (error, res) => {
+                if (error) throw error;
+                response.status(200).json({
+                    "status": "success",
+                    "message": "Producto registrado"
+                });
             });
         });
+
+
     });
 });
 
