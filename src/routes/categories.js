@@ -59,7 +59,12 @@ router.post('/', checkAuth, (request, response) => {
         if (err) throw err; // not connected!
 
         mysqlConnection.query('INSERT INTO categories set ?', validCategorie.toJSON(), (error, res) => {
-            if (error) throw error;
+            if (error)
+                response.status(500).json({
+                    "status": "error",
+                    "message": error
+                });
+
             response.status(200).json({
                 "status": "success",
                 "message": "Categoria registrada"
