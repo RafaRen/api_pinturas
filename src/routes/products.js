@@ -60,9 +60,11 @@ router.get('/idCategory/:id', (request, response) => {
             if (rows.length <= 0)
                 return response.status(404).json({
                     "status": "error",
-                    "message": "Producto no encontrado"
+                    "message": "El idCategoria = " + id + " no tiene productos relacionados"
                 });
-
+            mysqlConnection.on('release', function (connection) {
+                console.log('Connection %d released', connection.threadId);
+            });
             response.status(200).json({
                 "status": "success",
                 "data": rows
