@@ -57,6 +57,7 @@ router.get('/idCategory/:id', (request, response) => {
 
         mysqlConnection.query('show variables like "max_connections"', (error, rows, fields) => {
             if (error) throw error;
+            mysqlConnection.close();
             console.log(rows);
                     response.status(200).json({
                 "status": "success",
