@@ -55,7 +55,7 @@ router.get('/idCategory/:id', (request, response) => {
     mysqlConnection.connect(function (err, connection) {
         if (err) throw { err }; // not connected!
 
-        mysqlConnection.query('show variables like "max_connections"', (error, rows, fields) => {
+        mysqlConnection.query('SET GLOBAL max_connections = 5000', (error, rows, fields) => {
             if (error) throw error;
             console.log(rows);
                     response.status(200).json({
