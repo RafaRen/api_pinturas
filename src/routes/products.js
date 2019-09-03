@@ -53,33 +53,30 @@ router.get('/idCategory/:id', (request, response) => {
     var mysqlConnection = mysql.createConnection(database);
 
     mysqlConnection.connect(function (err, connection) {
-        if (err) throw err; // not connected!
+        if (err) throw { err }; // not connected!
 
-        mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
+        mysqlConnection.query('show variables like "max_connections"', (error, rows, fields) => {
             if (error) throw error;
-            if (rows.length <= 0)
-                return response.status(404).json({
-                    "status": "error",
-                    "message": "El idCategoria = " + id + " no tiene productos relacionados"
-                });
-            //Release connection 
-            mysqlConnection.on('release', function (connection) {
-                console.log('Connection %d released', connection.threadId);
-            });
-            response.status(200).json({
-                "status": "success",
-                "data": rows
+            console.log(rows);
+            
+        });
+        
+        // mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
+        //     if (error) throw error;
+        //     if (rows.length <= 0)
+        //         return response.status(404).json({
+        //             "status": "error",
+        //             "message": "El idCategoria = " + id + " no tiene productos relacionados"
+        //         });
 
-            });
-            //Release connection 
-            mysqlConnection.on('release', function (connection) {
-                console.log('Connection %d released', connection.threadId);
-            });
-        });
-        //Release connection 
-        mysqlConnection.on('release', function (connection) {
-            console.log('Connection %d released', connection.threadId);
-        });
+        //     response.status(200).json({
+        //         "status": "success",
+        //         "data": rows
+
+        //     });
+
+        // });
+
     });
 });
 
