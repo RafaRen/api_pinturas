@@ -54,34 +54,22 @@ router.get('/idCategory/:id', (request, response) => {
 
     mysqlConnection.connect(function (err, connection) {
         if (err) throw { err }; // not connected!
-
-        mysqlConnection.query('show variables like "max_connections"', (error, rows, fields) => {
+        
+        mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
             if (error) throw error;
-            mysqlConnection.close();
-            console.log(rows);
-                    response.status(200).json({
+            if (rows.length <= 0)
+                return response.status(404).json({
+                    "status": "error",
+                    "message": "El idCategoria = " + id + " no tiene productos relacionados"
+                });
+
+            response.status(200).json({
                 "status": "success",
                 "data": rows
 
             });
-            
+
         });
-        
-        // mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
-        //     if (error) throw error;
-        //     if (rows.length <= 0)
-        //         return response.status(404).json({
-        //             "status": "error",
-        //             "message": "El idCategoria = " + id + " no tiene productos relacionados"
-        //         });
-
-        //     response.status(200).json({
-        //         "status": "success",
-        //         "data": rows
-
-        //     });
-
-        // });
 
     });
 });
