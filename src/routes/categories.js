@@ -41,7 +41,6 @@ router.get('/:id', (request, response) => {
                 });
             response.status(200).json(rows[0]);
         });
-
     });
 });
 
