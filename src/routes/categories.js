@@ -54,17 +54,11 @@ router.post('/', checkAuth, (request, response) => {
     //instantiate pool conection every petition created
     var mysql = require('mysql2');
     var mysqlConnection = mysql.createConnection(database);
-
     mysqlConnection.connect(function (err, connection) {
         if (err) throw err; // not connected!
-
         mysqlConnection.query('INSERT INTO categories set ?', validCategorie.toJSON(), (error, res) => {
-            if (error)
-                response.status(500).json({
-                    "status": "error",
-                    "message": error
-                });
-
+            if (error) throw error;
+            
             response.status(200).json({
                 "status": "success",
                 "message": "Categoria registrada"
