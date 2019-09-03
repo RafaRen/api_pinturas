@@ -62,7 +62,7 @@ router.get('/idCategory/:id', (request, response) => {
                     "status": "error",
                     "message": "Producto no encontrado"
                 });
-            response.status(200).json(rows[0]);
+            response.status(200).json(rows);
         });
     });
 });
