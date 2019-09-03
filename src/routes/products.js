@@ -65,9 +65,8 @@ router.get('/idCategory/:id', (request, response) => {
 
             response.status(200).json({
                 "status": "success",
-                "data": [
-                    rows
-                ]
+                "data": rows
+
             });
         });
     });
