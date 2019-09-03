@@ -54,23 +54,29 @@ router.get('/idCategory/:id', (request, response) => {
 
     mysqlConnection.connect(function (err, connection) {
         if (err) throw { err }; // not connected!
-
-        mysqlConnection.query('Select * from categories WHERE _id = ?', id, (error, rows, fields) => {
+        mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
             if (error) throw error;
+
             if (rows.length <= 0)
                 return response.status(404).json({
                     "status": "error",
-                    "message": "Categoria no encontrada"
+                    "message": "El idCategoria = " + id + " no tiene productos relacionados"
                 });
-            response.status(200).json(rows[0]);
+
+            response.status(200).json({
+                "status": "success",
+                "data": rows
+
+            });
         });
+
     });
 });
 
 
 //Create product
 router.post('/', checkAuth, (request, response) => {
-    const { id } = request.body.idCategory;
+    const id = request.body.idCategory;
     var validProduct = productModel(request.body);
     var error = validProduct.validateSync();
     if (error) throw error;
@@ -81,15 +87,14 @@ router.post('/', checkAuth, (request, response) => {
     mysqlConnection.connect(function (err, connection) {
         if (err) throw err; // not connected!
         //Search if the current idCategory exists
-        mysqlConnection.query('Select * from products WHERE idCategory = ?', id, (error, rows, fields) => {
+        mysqlConnection.query('Select * from categories WHERE _id = ?', id, (error, rows, fields) => {
             if (error) throw error;
-
             if (rows.length <= 0)
                 return response.status(404).json({
                     "status": "error",
-                    "message": "El idCategoria = " + id + " no tiene productos relacionados"
+                    "message": "Categoria no encontrada"
                 });
-
+            //Add product
             mysqlConnection.query('INSERT INTO products set ?', validProduct.toJSON(), (error, res) => {
                 if (error) throw error;
                 response.status(200).json({
@@ -98,7 +103,6 @@ router.post('/', checkAuth, (request, response) => {
                 });
             });
         });
-
 
     });
 });
