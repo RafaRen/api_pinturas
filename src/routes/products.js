@@ -70,6 +70,7 @@ router.get('/idCategory/:id', (request, response) => {
 
 //Create product
 router.post('/', checkAuth, (request, response) => {
+    const { id } = request.body.idCategory;
     var validProduct = productModel(request.body);
     var error = validProduct.validateSync();
     if (error) throw error;
