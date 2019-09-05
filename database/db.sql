@@ -1,11 +1,14 @@
 --Configuracion para usuario en NODE.JS
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root'
+ALTER USER 'b18469d6706cbb'@'heroku_1b819384bce6abd' IDENTIFIED WITH mysql_native_password BY '1dbe4ebd'
 
-DROP DATABASE database_pinturas
+GRANT SUPER ON *.* TO b18469d6706cbb@'heroku_1b819384bce6abd' IDENTIFIED BY '1dbe4ebd'
 
-create database database_pinturas
-USE database_pinturas
+DROP DATABASE heroku_1b819384bce6abd
+use heroku_1b819384bce6abd
+create database heroku_1b819384bce6abd
+USE heroku_1b819384bce6abd
 
+ 
 
 CREATE TABLE users(
     _id BIGINT NOT NULL ,
@@ -66,17 +69,17 @@ ALTER TABLE products
 DESCRIBE products;
 
 -- Orders
-
+Drop table orders
 CREATE TABLE orders
 (
     _id BIGINT NOT NULL,
     total float NOT NULL,
     state INTEGER NOT NULL,
     idUser BIGINT NOT NULL,
-    idProduct BIGINT NOT NULL,
+    idOrder_detail BIGINT NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     CONSTRAINT FkUser FOREIGN KEY(idUser) REFERENCES users(_id),
-    CONSTRAINT FkProduct FOREIGN KEY(idProduct) REFERENCES products(_id)
+    CONSTRAINT FkOrder FOREIGN KEY(idOrder_detail) REFERENCES products(_id)
 );
 
 ALTER TABLE orders
@@ -90,15 +93,15 @@ DESCRIBE orders;
 
 
 -- Order_detail
-
+drop table order_detail
 CREATE TABLE order_detail
 (
     _id BIGINT NOT NULL,
     priceUnit float NOT NULL,
     amount INTEGER NOT NULL,
-    idOrder BIGINT NOT NULL,
+    idProduct BIGINT NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    CONSTRAINT FkOrderDetail FOREIGN KEY(idOrder) REFERENCES orders(_id)
+    CONSTRAINT FkProduct FOREIGN KEY(idProduct) REFERENCES Products(_id)
 );
 
 ALTER TABLE order_detail 
@@ -110,5 +113,12 @@ ALTER TABLE order_detail
 
 DESCRIBE order_detail;
 
+CREATE TABLE cart(
+	idUser bigint NOT NULL,
+	idProduct bigint NOT NULL,
+	CONSTRAINT FkUserCart FOREIGN KEY(idUser) REFERENCES users(_id),
+	CONSTRAINT FkProductCart FOREIGN KEY(idProduct) REFERENCES Products(_id)
+
+);
 
 

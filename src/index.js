@@ -45,6 +45,8 @@ const categorieRoute = require('./routes/categories');
 const productRoute = require('./routes/products');
 const orderRoute = require('./routes/orders');
 const orderDetailsRoute = require('./routes/order_details');
+const cartRoute = require('./routes/shopping_cart');
+
 
 
 //Routes
@@ -54,7 +56,7 @@ app.use('/categories', categorieRoute);
 app.use('/products', productRoute);
 app.use('/orders', orderRoute);
 app.use('/order_detail', orderDetailsRoute);
-
+app.use('/cart',cartRoute);
 
 
 app.use((req, res, next) => {
